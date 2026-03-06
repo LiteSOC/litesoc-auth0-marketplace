@@ -1,0 +1,28 @@
+{
+  "secrets": [
+    {
+      "name": "LITESOC_API_KEY",
+      "label": "LiteSOC API Key",
+      "description": "Your LiteSOC Live API key. Get it from Settings → API Keys in your LiteSOC dashboard."
+    }
+  ],
+  "configuration": [
+    {
+      "name": "LITESOC_DEBUG_MODE",
+      "label": "Debug Mode",
+      "description": "Enable verbose logging for troubleshooting. Disable in production.",
+      "default_value": "false",
+      "options": [
+        {
+          "value": "true",
+          "label": "Enabled"
+        },
+        {
+          "value": "false",
+          "label": "Disabled"
+        }
+      ]
+    }
+  ],
+  "dependencies": []
+}

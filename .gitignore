@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+*.zip
+
+# Coverage reports
+coverage/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Auth0 deployment credentials
+.auth0-deploy-cli-config.json
+auth0-deploy/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Test artifacts
+.jest/

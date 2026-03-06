@@ -1,0 +1,26 @@
+{
+  "name": "litesoc-auth0-marketplace",
+  "version": "1.0.0",
+  "description": "LiteSOC Auth0 Marketplace Integration Package",
+  "author": "LiteSOC <support@litesoc.io>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint integration/**/*.js",
+    "lint:fix": "eslint integration/**/*.js --fix"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.57.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/integration/**/*.spec.js"
+    ],
+    "collectCoverage": true,
+    "coverageDirectory": "coverage",
+    "coverageReporters": ["text", "lcov"]
+  }
+}
