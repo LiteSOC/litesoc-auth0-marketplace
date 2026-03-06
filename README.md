@@ -10,6 +10,41 @@ LiteSOC provides real-time security monitoring for authentication events with:
 - **Unified Security Timeline**: All auth events in one dashboard
 - **SOC 2 Compliant**: Enterprise-grade security and audit logging
 
+## Features by Plan
+
+| Feature | Free | Pro | Enterprise |
+|---------|------|-----|------------|
+| GeoIP Enrichment | ✅ | ✅ | ✅ |
+| Network Intelligence (VPN/Tor/Proxy) | ✅ | ✅ | ✅ |
+| Brute Force Detection | ✅ | ✅ | ✅ |
+| Monthly Events | 5,000 | 50,000 | 500,000+ |
+| Event Retention | 7 days | 30 days | 90 days |
+| Rate Limit | 60/min | 300/min | 1,200/min |
+| Impossible Travel Detection | ❌ | ✅ | ✅ |
+| Geo-Anomaly Detection | ❌ | ✅ | ✅ |
+| Email/Slack/Discord Alerts | ❌ | ✅ | ✅ |
+| Custom Threat Models | ❌ | ❌ | ✅ |
+| IP Whitelisting | ❌ | ❌ | ✅ |
+
+## Response Headers
+
+The `/collect` endpoint returns headers with plan and usage info:
+
+| Header | Description |
+|--------|-------------|
+| `X-LiteSOC-Plan` | Current plan: `free`, `pro`, or `enterprise` |
+| `X-LiteSOC-Retention` | Event retention in days |
+| `X-LiteSOC-Quota-Remaining` | Events remaining this month |
+
+## Error Handling
+
+| Status | Reason | Action |
+|--------|--------|--------|
+| 429 | Rate limit exceeded | Retry after `Retry-After` seconds |
+| 429 | Monthly quota exceeded | Upgrade plan at litesoc.io/dashboard/billing |
+| 401 | Invalid API key | Check LITESOC_API_KEY secret |
+| 403 | Quota exceeded (legacy) | Upgrade plan |
+
 ## Integration Types
 
 This package includes **4 Action integrations** for complete auth monitoring:

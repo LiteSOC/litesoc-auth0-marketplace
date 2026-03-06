@@ -1,7 +1,7 @@
 {
   "name": "litesoc-auth0-marketplace",
-  "version": "1.0.0",
-  "description": "LiteSOC Auth0 Marketplace Integration Package",
+  "version": "2.0.0",
+  "description": "LiteSOC Auth0 Marketplace Integration Package - Security monitoring with behavioral AI detection",
   "author": "LiteSOC <support@litesoc.io>",
   "license": "MIT",
   "private": true,

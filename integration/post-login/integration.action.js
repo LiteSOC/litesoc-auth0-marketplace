@@ -3,6 +3,16 @@
  * 
  * Sends authentication events to LiteSOC for security monitoring and behavioral AI detection.
  * 
+ * Features enabled by LiteSOC (based on your plan):
+ * - Free: GeoIP enrichment, Network Intelligence, Brute Force Detection
+ * - Pro+: Impossible Travel, Geo-Anomaly, Email/Slack/Discord Alerts
+ * - Enterprise: Custom Threat Models, IP Whitelisting, SSO
+ * 
+ * Response headers provide plan and quota information:
+ * - X-LiteSOC-Plan: Your current plan (free, pro, enterprise)
+ * - X-LiteSOC-Retention: Event retention days
+ * - X-LiteSOC-Quota-Remaining: Events remaining this month
+ * 
  * @param {Event} event - Auth0 event object containing user and request data
  * @param {API} api - Auth0 API object for modifying the login flow
  * @see https://litesoc.io/docs/integrations/auth0
@@ -23,25 +33,22 @@ exports.onExecutePostLogin = async (event, api) => {
     return;
   }
 
-  // Build the event payload
+  // Build the event payload (matches /collect schema)
   const payload = {
-    event_type: 'auth.login_success',
+    event: 'auth.login_success',
     actor: {
       id: event.user.user_id,
       email: event.user.email,
-      name: event.user.name || event.user.nickname || null,
     },
-    context: {
-      ip_address: event.request.ip,
-      user_agent: event.request.user_agent,
-      geo: event.request.geoip ? {
-        city: event.request.geoip.cityName,
-        country: event.request.geoip.countryCode,
-        latitude: event.request.geoip.latitude,
-        longitude: event.request.geoip.longitude,
-      } : null,
-    },
+    // IP address at root level - required for behavioral AI detection
+    user_ip: event.request.ip,
     metadata: {
+      // Source identification
+      source: 'auth0-marketplace-action',
+      // User info
+      name: event.user.name || event.user.nickname || null,
+      user_agent: event.request.user_agent,
+      // Auth0 context
       auth0_tenant: event.tenant.id,
       connection: event.connection.name,
       connection_strategy: event.connection.strategy,
@@ -50,6 +57,13 @@ exports.onExecutePostLogin = async (event, api) => {
       mfa_used: event.authentication?.methods?.some(m => m.name === 'mfa') || false,
       login_count: event.stats?.logins_count || 0,
       risk_score: event.riskAssessment?.risk?.value || null,
+      // Auth0's geo data (LiteSOC Worker will also enrich with our own)
+      auth0_geo: event.request.geoip ? {
+        city: event.request.geoip.cityName,
+        country: event.request.geoip.countryCode,
+        latitude: event.request.geoip.latitude,
+        longitude: event.request.geoip.longitude,
+      } : null,
     },
   };
 
@@ -66,17 +80,37 @@ exports.onExecutePostLogin = async (event, api) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'User-Agent': 'LiteSOC-Auth0-Action/1.0.0',
+        'X-API-Key': apiKey,
+        'User-Agent': 'LiteSOC-Auth0-Marketplace/2.0.0',
       },
       body: JSON.stringify(payload),
     });
 
+    // Parse response headers for plan info
+    const planType = response.headers.get('X-LiteSOC-Plan') || 'unknown';
+    const retentionDays = response.headers.get('X-LiteSOC-Retention') || 'unknown';
+    const quotaRemaining = response.headers.get('X-LiteSOC-Quota-Remaining');
+    const quotaLimit = response.headers.get('X-LiteSOC-Quota-Limit');
+
     if (debugMode) {
-      console.log(`LiteSOC: Response status ${response.status}`);
+      console.log(`LiteSOC: Response ${response.status} | Plan: ${planType} | Retention: ${retentionDays}d | Quota: ${quotaRemaining || 'N/A'}/${quotaLimit || 'N/A'} remaining`);
     }
 
-    if (!response.ok) {
+    if (response.status === 429) {
+      // Rate limit or quota exceeded
+      const retryAfter = response.headers.get('Retry-After');
+      const body = await response.json().catch(() => ({}));
+      
+      if (body.error?.includes('quota')) {
+        console.log(`LiteSOC: Monthly quota exceeded. Upgrade at https://litesoc.io/dashboard/billing`);
+      } else {
+        console.log(`LiteSOC: Rate limited. Retry after ${retryAfter || 60}s`);
+      }
+    } else if (response.status === 403) {
+      // Quota exceeded
+      const quotaUsed = response.headers.get('X-LiteSOC-Quota-Used');
+      console.log(`LiteSOC: Monthly event quota exceeded (${quotaUsed}/${quotaLimit}). Upgrade at https://litesoc.io/dashboard/billing`);
+    } else if (!response.ok) {
       const errorText = await response.text();
       console.log(`LiteSOC: API error (${response.status}): ${errorText}`);
     }
