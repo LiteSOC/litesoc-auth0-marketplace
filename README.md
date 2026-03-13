@@ -52,9 +52,9 @@ This package includes **4 Action integrations** for complete auth monitoring:
 | Action | Trigger | Events Tracked |
 |--------|---------|----------------|
 | Post Login | Login Flow | `auth.login_success`, with full context |
-| Post User Registration | Post Signup | `auth.signup_success` |
+| Post User Registration | Post Signup | `auth.login_success` |
 | Post Change Password | Password Reset | `auth.password_reset` |
-| Send Phone Message | MFA Trigger | `auth.mfa_challenge` |
+| Send Phone Message | MFA Trigger | `auth.mfa_enabled` |
 
 ## Directory Structure
 

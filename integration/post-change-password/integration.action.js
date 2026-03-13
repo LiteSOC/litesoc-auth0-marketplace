@@ -32,7 +32,7 @@ exports.onExecutePostChangePassword = async (event, api) => {
   // Build the event payload (matches /collect schema)
   // Note: Post-change-password flow doesn't have request context (no IP)
   const payload = {
-    event: 'auth.password_changed',
+    event: 'auth.password_reset',
     actor: {
       id: event.user.user_id,
       email: event.user.email,

@@ -74,7 +74,7 @@ describe('LiteSOC Post-User-Registration Action', () => {
       const callArgs = global.fetch.mock.calls[0];
       const body = JSON.parse(callArgs[1].body);
 
-      expect(body.event_type).toBe('auth.signup_success');
+      expect(body.event_type).toBe('auth.login_success');
     });
 
     it('should include user created_at in metadata', async () => {

@@ -36,7 +36,7 @@ exports.onExecuteSendPhoneMessage = async (event, api) => {
 
   // Build the event payload (matches /collect schema)
   const payload = {
-    event: 'auth.mfa_challenge_sent',
+    event: 'auth.mfa_enabled',
     actor: {
       id: event.user.user_id,
       email: event.user.email,

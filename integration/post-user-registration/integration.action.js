@@ -30,7 +30,7 @@ exports.onExecutePostUserRegistration = async (event, api) => {
 
   // Build the event payload (matches /collect schema)
   const payload = {
-    event: 'auth.signup_success',
+    event: 'auth.login_success',
     actor: {
       id: event.user.user_id,
       email: event.user.email,
