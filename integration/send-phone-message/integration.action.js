@@ -36,13 +36,21 @@ exports.onExecuteSendPhoneMessage = async (event, api) => {
 
   // Build the event payload (matches /collect schema)
   const payload = {
-    event: 'auth.mfa_enabled',
+    event_type: 'auth.mfa_challenge',
     actor: {
       id: event.user.user_id,
       email: event.user.email,
     },
-    // IP address at root level - required for behavioral AI detection
-    user_ip: event.request?.ip || null,
+    context: {
+      ip_address: event.request?.ip || null,
+      user_agent: event.request?.user_agent || null,
+      geo: event.request?.geoip ? {
+        city: event.request.geoip.cityName,
+        country: event.request.geoip.countryCode,
+        latitude: event.request.geoip.latitude,
+        longitude: event.request.geoip.longitude,
+      } : null,
+    },
     metadata: {
       // Source identification
       source: 'auth0-marketplace-action',
@@ -55,17 +63,11 @@ exports.onExecuteSendPhoneMessage = async (event, api) => {
       channel: event.message_options?.channel || 'sms', // 'sms' or 'voice'
       phone_masked: maskedPhone,
       // Auth0's geo data (LiteSOC Worker will also enrich with our own)
-      auth0_geo: event.request?.geoip ? {
-        city: event.request.geoip.cityName,
-        country: event.request.geoip.countryCode,
-        latitude: event.request.geoip.latitude,
-        longitude: event.request.geoip.longitude,
-      } : null,
     },
   };
 
   if (debugMode) {
-    console.log('LiteSOC: Sending MFA challenge event', JSON.stringify({
+    console.log('LiteSOC: Sending MFA challenge event ' + JSON.stringify({
       ...payload,
       _debug: true,
       _api_key_prefix: apiKey.substring(0, 15) + '***',
@@ -77,8 +79,8 @@ exports.onExecuteSendPhoneMessage = async (event, api) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': apiKey,
-        'User-Agent': 'LiteSOC-Auth0-Marketplace/2.0.0',
+        'Authorization': `Bearer ${apiKey}`,
+        'User-Agent': 'LiteSOC-Auth0-Action/1.0.0',
       },
       body: JSON.stringify(payload),
     });

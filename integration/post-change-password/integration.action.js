@@ -32,13 +32,15 @@ exports.onExecutePostChangePassword = async (event, api) => {
   // Build the event payload (matches /collect schema)
   // Note: Post-change-password flow doesn't have request context (no IP)
   const payload = {
-    event: 'auth.password_reset',
+    event_type: 'auth.password_reset',
     actor: {
       id: event.user.user_id,
       email: event.user.email,
     },
-    // No IP available in post-change-password flow
-    user_ip: null,
+    context: {
+      ip_address: null,
+      user_agent: null,
+    },
     metadata: {
       // Source identification
       source: 'auth0-marketplace-action',
@@ -53,7 +55,7 @@ exports.onExecutePostChangePassword = async (event, api) => {
   };
 
   if (debugMode) {
-    console.log('LiteSOC: Sending password change event', JSON.stringify({
+    console.log('LiteSOC: Sending password change event ' + JSON.stringify({
       ...payload,
       _debug: true,
       _api_key_prefix: apiKey.substring(0, 15) + '***',

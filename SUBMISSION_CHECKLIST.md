@@ -10,8 +10,8 @@
   - [ ] Company logo (256x256 PNG, transparent background)
   - [ ] Website URL: https://litesoc.io
   - [ ] Support email: support@litesoc.io
-  - [ ] Privacy policy URL: https://litesoc.io/legal/privacy
-  - [ ] Terms of service URL: https://litesoc.io/legal/terms
+  - [ ] Privacy policy URL: https://www.litesoc.io/legal/privacy
+  - [ ] Terms of service URL: https://www.litesoc.io/legal/terms
 
 ### 2. Integration Code
 - [x] Post-Login Action (`integration/post-login/`)
@@ -36,16 +36,16 @@
   - [x] integration.action.spec.js
 
 ### 3. Media Assets
-- [ ] 256x256-logo.png (LiteSOC logo, transparent background)
-- [ ] Optional: 460x260-column-1.png (value proposition image 1)
-- [ ] Optional: 460x260-column-2.png (value proposition image 2)
-- [ ] Optional: 460x260-column-3.png (value proposition image 3)
+- [x] 256x256-logo.png (LiteSOC logo, transparent background)
+- [x] Optional: 460x260-column-1.png (value proposition image 1)
+- [x] Optional: 460x260-column-2.png (value proposition image 2)
+- [x] Optional: 460x260-column-3.png (value proposition image 3)
 
 ### 4. Testing
-- [ ] Run `make test` - all tests passing
-- [ ] Run `make lint` - no linting errors
-- [ ] Manual testing on Auth0 test tenant
-- [ ] Verified events appear in LiteSOC dashboard
+- [x] Run `make test` - all tests passing
+- [x] Run `make lint` - no linting errors
+- [x] Manual testing on Auth0 test tenant
+- [x] Verified events appear in LiteSOC dashboard
 
 ### 5. Documentation
 - [x] README.md

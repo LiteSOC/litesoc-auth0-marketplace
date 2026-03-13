@@ -5,7 +5,7 @@ test:
 	@echo "Running tests for all integrations..."
 	@for dir in integration/*/; do \
 		echo "Testing $$dir..."; \
-		cd $$dir && npx jest --passWithNoTests && cd ../..; \
+		(cd $$dir && npx jest --passWithNoTests); \
 	done
 
 # Lint all JavaScript files

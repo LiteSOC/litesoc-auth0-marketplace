@@ -14,6 +14,9 @@ describe('LiteSOC Post-Change-Password Action', () => {
       ok: true,
       status: 200,
       text: jest.fn().mockResolvedValue(''),
+      headers: {
+        get: jest.fn().mockReturnValue(null),
+      },
     });
 
     mockEvent = {
@@ -96,6 +99,64 @@ describe('LiteSOC Post-Change-Password Action', () => {
       global.fetch.mockRejectedValue(new Error('Network timeout'));
 
       await expect(onExecutePostChangePassword(mockEvent, mockApi)).resolves.not.toThrow();
+    });
+
+    it('should not throw on API error response', async () => {
+      global.fetch.mockResolvedValue({
+        ok: false,
+        status: 500,
+        text: jest.fn().mockResolvedValue('Internal Server Error'),
+        headers: { get: jest.fn().mockReturnValue(null) },
+      });
+
+      await expect(onExecutePostChangePassword(mockEvent, mockApi)).resolves.not.toThrow();
+    });
+
+    it('should handle 429 rate limit response', async () => {
+      global.fetch.mockResolvedValue({
+        ok: false,
+        status: 429,
+        json: jest.fn().mockResolvedValue({ error: 'rate limit exceeded' }),
+        headers: { get: jest.fn().mockReturnValue(null) },
+      });
+
+      await expect(onExecutePostChangePassword(mockEvent, mockApi)).resolves.not.toThrow();
+    });
+
+    it('should handle 429 quota exceeded response', async () => {
+      global.fetch.mockResolvedValue({
+        ok: false,
+        status: 429,
+        json: jest.fn().mockResolvedValue({ error: 'monthly quota exceeded' }),
+        headers: { get: jest.fn().mockReturnValue(null) },
+      });
+
+      await expect(onExecutePostChangePassword(mockEvent, mockApi)).resolves.not.toThrow();
+    });
+
+    it('should handle 403 quota exceeded response', async () => {
+      global.fetch.mockResolvedValue({
+        ok: false,
+        status: 403,
+        headers: { get: jest.fn().mockReturnValue(null) },
+      });
+
+      await expect(onExecutePostChangePassword(mockEvent, mockApi)).resolves.not.toThrow();
+    });
+  });
+
+  describe('Debug mode', () => {
+    it('should log when debug mode is enabled', async () => {
+      mockEvent.configuration.LITESOC_DEBUG_MODE = 'true';
+      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+
+      await onExecutePostChangePassword(mockEvent, mockApi);
+
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('LiteSOC: Sending password change event')
+      );
+
+      consoleSpy.mockRestore();
     });
   });
 });
