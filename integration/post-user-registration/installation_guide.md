@@ -44,8 +44,7 @@ Every new user signup sends the following to LiteSOC:
 | `event_type` | `auth.login_success` |
 | `actor.id` | Auth0 user ID |
 | `actor.email` | User's email address |
-| `context.ip_address` | Signup IP address |
-| `context.user_agent` | Browser/device info |
+| `user_ip` | User IP address |
 | `metadata.connection` | Auth0 connection name |
 
 ## Use Cases

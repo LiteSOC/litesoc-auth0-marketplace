@@ -41,16 +41,7 @@ exports.onExecuteSendPhoneMessage = async (event, api) => {
       id: event.user.user_id,
       email: event.user.email,
     },
-    context: {
-      ip_address: event.request?.ip || null,
-      user_agent: event.request?.user_agent || null,
-      geo: event.request?.geoip ? {
-        city: event.request.geoip.cityName,
-        country: event.request.geoip.countryCode,
-        latitude: event.request.geoip.latitude,
-        longitude: event.request.geoip.longitude,
-      } : null,
-    },
+    user_ip: event.request?.ip || null,
     metadata: {
       // Source identification
       source: 'auth0-marketplace-action',

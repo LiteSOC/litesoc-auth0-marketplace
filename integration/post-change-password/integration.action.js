@@ -37,10 +37,7 @@ exports.onExecutePostChangePassword = async (event, api) => {
       id: event.user.user_id,
       email: event.user.email,
     },
-    context: {
-      ip_address: null,
-      user_agent: null,
-    },
+    user_ip: null,
     metadata: {
       // Source identification
       source: 'auth0-marketplace-action',

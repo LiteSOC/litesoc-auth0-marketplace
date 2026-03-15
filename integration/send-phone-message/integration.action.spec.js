@@ -103,8 +103,7 @@ describe('LiteSOC Send-Phone-Message Action', () => {
       const callArgs = global.fetch.mock.calls[0];
       const body = JSON.parse(callArgs[1].body);
 
-      expect(body.context.geo.city).toBe('Los Angeles');
-      expect(body.context.ip_address).toBe('192.0.2.100');
+      expect(body.user_ip).toBe('192.0.2.100');
     });
   });
 

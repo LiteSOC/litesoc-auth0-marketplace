@@ -43,7 +43,7 @@ Every MFA phone challenge sends the following to LiteSOC:
 | `event_type` | `auth.mfa_challenge` |
 | `actor.id` | Auth0 user ID |
 | `actor.email` | User's email address |
-| `context.ip_address` | Request IP address |
+| `user_ip` | User IP address |
 | `metadata.mfa_type` | SMS or Voice |
 | `metadata.phone_masked` | Last 4 digits of phone number |
 

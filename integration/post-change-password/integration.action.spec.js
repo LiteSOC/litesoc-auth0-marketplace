@@ -82,8 +82,7 @@ describe('LiteSOC Post-Change-Password Action', () => {
       const callArgs = global.fetch.mock.calls[0];
       const body = JSON.parse(callArgs[1].body);
 
-      expect(body.context.ip_address).toBeNull();
-      expect(body.context.user_agent).toBeNull();
+      expect(body.user_ip).toBeNull();
     });
   });
 
