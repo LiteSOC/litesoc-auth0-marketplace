@@ -77,20 +77,19 @@ describe('LiteSOC Post-Login Action', () => {
           method: 'POST',
           headers: expect.objectContaining({
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer lsoc_live_test_key_123',
-            'User-Agent': 'LiteSOC-Auth0-Action/1.0.0',
+            'X-API-KEY': 'lsoc_live_test_key_123',
           }),
         })
       );
     });
 
-    it('should include correct event_type', async () => {
+    it('should include correct event', async () => {
       await onExecutePostLogin(mockEvent, mockApi);
 
       const callArgs = global.fetch.mock.calls[0];
       const body = JSON.parse(callArgs[1].body);
 
-      expect(body.event_type).toBe('auth.login_success');
+      expect(body.event).toBe('auth.login_success');
     });
 
     it('should include actor information', async () => {
@@ -102,7 +101,6 @@ describe('LiteSOC Post-Login Action', () => {
       expect(body.actor).toEqual({
         id: 'auth0|123456789',
         email: 'test@example.com',
-        name: 'Test User',
       });
     });
 
@@ -112,14 +110,7 @@ describe('LiteSOC Post-Login Action', () => {
       const callArgs = global.fetch.mock.calls[0];
       const body = JSON.parse(callArgs[1].body);
 
-      expect(body.context.ip_address).toBe('203.0.113.50');
-      expect(body.context.user_agent).toContain('Mozilla');
-      expect(body.context.geo).toEqual({
-        city: 'San Francisco',
-        country: 'US',
-        latitude: 37.7749,
-        longitude: -122.4194,
-      });
+      expect(body.user_ip).toBe('203.0.113.50');
     });
 
     it('should include metadata', async () => {
@@ -168,17 +159,6 @@ describe('LiteSOC Post-Login Action', () => {
       global.fetch.mockRejectedValue(new Error('Network timeout'));
 
       await expect(onExecutePostLogin(mockEvent, mockApi)).resolves.not.toThrow();
-    });
-
-    it('should handle missing geoip data', async () => {
-      mockEvent.request.geoip = null;
-
-      await onExecutePostLogin(mockEvent, mockApi);
-
-      const callArgs = global.fetch.mock.calls[0];
-      const body = JSON.parse(callArgs[1].body);
-
-      expect(body.context.geo).toBeNull();
     });
   });
 

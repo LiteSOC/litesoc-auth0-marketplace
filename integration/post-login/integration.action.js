@@ -35,22 +35,12 @@ exports.onExecutePostLogin = async (event, api) => {
 
   // Build the event payload (matches /collect schema)
   const payload = {
-    event_type: 'auth.login_success',
+    event: 'auth.login_success',
     actor: {
       id: event.user.user_id,
       email: event.user.email,
-      name: event.user.name || event.user.nickname || null,
     },
-    context: {
-      ip_address: event.request.ip,
-      user_agent: event.request.user_agent,
-      geo: event.request.geoip ? {
-        city: event.request.geoip.cityName,
-        country: event.request.geoip.countryCode, 
-        latitude: event.request.geoip.latitude,
-        longitude: event.request.geoip.longitude,
-      } : null,
-    },
+    user_ip: event.request.ip,
     metadata: {
       // Source identification
       source: 'auth0-marketplace-action',
@@ -80,8 +70,7 @@ exports.onExecutePostLogin = async (event, api) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'User-Agent': 'LiteSOC-Auth0-Action/1.0.0',
+        'X-API-KEY': `${apiKey}`,
       },
       body: JSON.stringify(payload),
     });

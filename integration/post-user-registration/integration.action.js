@@ -30,15 +30,12 @@ exports.onExecutePostUserRegistration = async (event, api) => {
 
   // Build the event payload (matches /collect schema)
   const payload = {
-    event_type: 'auth.login_success',
+    event: 'auth.login_success',
     actor: {
       id: event.user.user_id,
       email: event.user.email,
     },
-    context: {
-      ip_address: event.request?.ip || null,
-      user_agent: event.request?.user_agent || null,
-    },
+    user_ip: event.request?.ip || null,
     metadata: {
       // Source identification
       source: 'auth0-marketplace-action',
@@ -67,8 +64,7 @@ exports.onExecutePostUserRegistration = async (event, api) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'User-Agent': 'LiteSOC-Auth0-Action/1.0.0',
+        'X-API-KEY': `${apiKey}`,
       },
       body: JSON.stringify(payload),
     });

@@ -65,19 +65,19 @@ describe('LiteSOC Post-User-Registration Action', () => {
         expect.objectContaining({
           method: 'POST',
           headers: expect.objectContaining({
-            'Authorization': 'Bearer lsoc_live_test_key_123',
+            'X-API-KEY': 'lsoc_live_test_key_123',
           }),
         })
       );
     });
 
-    it('should include correct event_type', async () => {
+    it('should include correct event', async () => {
       await onExecutePostUserRegistration(mockEvent, mockApi);
 
       const callArgs = global.fetch.mock.calls[0];
       const body = JSON.parse(callArgs[1].body);
 
-      expect(body.event_type).toBe('auth.login_success');
+      expect(body.event).toBe('auth.login_success');
     });
 
     it('should include user created_at in metadata', async () => {
@@ -106,8 +106,7 @@ describe('LiteSOC Post-User-Registration Action', () => {
       const callArgs = global.fetch.mock.calls[0];
       const body = JSON.parse(callArgs[1].body);
 
-      expect(body.context.ip_address).toBeNull();
-      expect(body.context.user_agent).toBeNull();
+      expect(body.user_ip).toBeNull();
     });
 
     it('should not throw on network error', async () => {

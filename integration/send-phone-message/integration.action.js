@@ -79,8 +79,7 @@ exports.onExecuteSendPhoneMessage = async (event, api) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'User-Agent': 'LiteSOC-Auth0-Action/1.0.0',
+        'X-API-KEY': `${apiKey}`,
       },
       body: JSON.stringify(payload),
     });
