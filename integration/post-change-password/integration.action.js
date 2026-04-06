@@ -55,7 +55,7 @@ exports.onExecutePostChangePassword = async (event, api) => {
     console.log('LiteSOC: Sending password change event ' + JSON.stringify({
       ...payload,
       _debug: true,
-      _api_key_prefix: apiKey.substring(0, 15) + '***',
+      _api_key_prefix: apiKey.substring(0, 4) + '***',
     }));
   }
 
