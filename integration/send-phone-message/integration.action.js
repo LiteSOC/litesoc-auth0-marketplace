@@ -19,7 +19,7 @@ const LITESOC_API_URL = 'https://api.litesoc.io/collect';
 /**
  * Handler that runs when a phone message (SMS/Voice) is sent for MFA
  */
-exports.onExecuteSendPhoneMessage = async (event, api) => {
+exports.onExecuteSendPhoneMessage = async (event) => {
   const apiKey = event.secrets.LITESOC_API_KEY;
   const debugMode = event.configuration.LITESOC_DEBUG_MODE === 'true';
 
@@ -58,11 +58,21 @@ exports.onExecuteSendPhoneMessage = async (event, api) => {
   };
 
   if (debugMode) {
-    console.log('LiteSOC: Sending MFA challenge event ' + JSON.stringify({
+    const redactedPayload = {
       ...payload,
+      actor: {
+        ...payload.actor,
+        email: payload.actor.email ? '***@***.***' : null,
+      },
+      user_ip: payload.user_ip ? '***redacted***' : null,
+      metadata: {
+        ...payload.metadata,
+        name: payload.metadata.name ? '***redacted***' : null,
+      },
       _debug: true,
-      _api_key_prefix: apiKey.substring(0, 15) + '***',
-    }));
+      _api_key_prefix: apiKey.substring(0, 4) + '***',
+    };
+    console.log('LiteSOC: Sending MFA challenge event ' + JSON.stringify(redactedPayload));
   }
 
   try {
